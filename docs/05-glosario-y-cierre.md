@@ -2,6 +2,21 @@
 
 **Estado:** draft
 
+## Glosario
+
+- **Dry-run:** ejecución que muestra el cambio previsto sin realizarlo.
+- **Frontera de laboratorio:** límite verificable que restringe archivos,
+  procesos y red a recursos creados para la práctica.
+- **Inode:** identidad de una entrada de sistema de archivos; un enlace duro
+  puede compartirla con otro nombre.
+- **Pipe:** conexión de la salida estándar de un proceso con la entrada estándar
+  de otro.
+- **PID:** identificador de un proceso dentro de su espacio de procesos.
+- **Socket:** extremo de comunicación identificado por protocolo, dirección y
+  puerto o por una ruta local.
+- **Umask:** máscara que elimina permisos de los permisos iniciales de una
+  entrada nueva.
+
 ## Diagnóstico de un servicio local
 
 ### Concepto y problema
@@ -54,3 +69,15 @@ frontera y verificar la evidencia posterior.
    archivo de estado.
 3. Una escucha solo prueba que alguien acepta conexiones; la petición y su
    evidencia prueban una parte adicional del protocolo y del manejo de datos.
+
+## Ruta de lectura y verificación
+
+Lee primero el contrato de laboratorio, continúa por shell y sistema local, y
+después por conectividad y automatización. Ejecuta los scripts de `tests/` en
+un entorno con Docker disponible; cada uno construye la misma imagen Debian y
+se ejecuta sin red externa. Esta repetición es deliberada: la evidencia de una
+práctica no debe depender de efectos residuales de otra.
+
+El curso no está revisado ni publicado. Sus laboratorios demuestran contratos
+locales y sus límites; no certifican un host de producción, una configuración
+organizacional ni un sistema remoto.
