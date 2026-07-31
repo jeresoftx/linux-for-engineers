@@ -93,3 +93,89 @@ recuperación depende de haber creado una copia o de un respaldo previo.
 3. Porque una variable mal validada puede quedar vacía o apuntar fuera del
    laboratorio. El curso solo permite limpiar directorios creados y validados
    por `new_lab_dir`.
+
+## Texto, pipes y búsqueda
+
+### Concepto
+
+Los programas Unix producen texto por salida estándar y reciben texto por
+entrada estándar. Un pipe conecta esas dos fronteras sin crear un archivo
+intermedio. La redirección cambia el destino de un flujo; no transforma los
+datos por sí sola.
+
+```mermaid
+flowchart LR
+  F[Fixture] --> R[rg filtra líneas]
+  R --> S[sort ordena]
+  S --> U[uniq resume]
+  U --> O[Salida comprobable]
+```
+
+### Problema
+
+Una cadena de comandos parece compacta, pero puede ocultar supuestos sobre
+espacios, codificación, orden y errores. El problema no es usar pipes: es no
+saber cuál comando selecciona, transforma, ordena o consume cada dato.
+
+### Herramientas y alternativas
+
+- `cat`, `less`, `head`, `tail` y `wc` observan contenido; `less` es mejor
+  para lectura humana y `head` o `tail` para muestras acotadas.
+- `grep` y `rg` buscan patrones. `rg` es rápido y respeta habitualmente
+  `.gitignore`; `grep` está disponible en casi todo sistema Unix.
+- `sort` establece un orden explícito; `uniq` solo agrupa duplicados contiguos,
+  de modo que normalmente recibe una salida ordenada.
+- `cut` sirve para campos sencillos con delimitador fijo; `awk` expresa reglas
+  por campos y `sed` transforma líneas. Cuando la entrada es JSON, CSV con
+  comillas o datos binarios, usa un parser especializado, no una tubería de
+  texto improvisada.
+- `find` recorre un árbol; `xargs` construye argumentos. Para nombres con
+  espacios o saltos de línea, usa `-print0` y `xargs -0`.
+
+### Ejemplo progresivo
+
+El quoting conserva el límite de cada argumento y la entrada se mantiene
+sintética dentro del laboratorio:
+
+```bash
+printf '%s\n' api worker api api worker >"$work/servicios.txt"
+rg --fixed-strings 'api' "$work/servicios.txt" \
+  | sort \
+  | uniq -c \
+  | awk '{ print $2 ":" $1 }'
+```
+
+La salida `api:3` se puede verificar sin depender de logs externos. Para
+guardar la evidencia, redirige solo al final: `... >"$work/resumen.txt"`.
+Usa `>>` únicamente cuando el contrato exige anexar; de otro modo puede mezclar
+una ejecución anterior con la actual.
+
+### Límites de expansión y errores
+
+No uses `for file in $(find ...)`: la shell separa por espacios y globbing.
+Prefiere que `find` invoque una acción segura o use una frontera nula:
+
+```bash
+find "$work" -type f -name '*.txt' -print0 \
+  | xargs -0 -r rg --fixed-strings --line-number 'api'
+```
+
+Con `set -o pipefail`, un fallo en cualquier etapa hace fallar la práctica. Sin
+esa opción, la shell suele conservar solo el estado del último comando y puede
+ocultar una selección vacía o una lectura fallida.
+
+### Ejercicios
+
+1. Crea una lista de entornos repetidos y produce un conteo ordenado por nombre.
+2. Busca una palabra literal que contiene `.` sin convertirla en una expresión
+   regular.
+3. Explica cuándo `cut -d, -f2` deja de ser una forma correcta de leer CSV.
+
+### Soluciones
+
+1. Ordena la lista antes de `uniq -c`, y usa `sort -k2,2` si deseas ordenar
+   por el nombre que acompaña al conteo.
+2. Usa `rg --fixed-strings 'v1.2' archivo`; el modo literal no trata `.` como
+   comodín.
+3. Deja de ser correcto cuando existen comas entre comillas, escapes o saltos
+   de línea dentro de un campo. Se requiere un parser de CSV.
