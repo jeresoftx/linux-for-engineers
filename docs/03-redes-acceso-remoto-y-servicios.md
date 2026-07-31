@@ -70,3 +70,75 @@ una revisión explícitos.
    La solución es registrar y verificar la huella correcta.
 3. Observa interfaz y socket, identifica el proceso propio, prueba el endpoint
    local y conserva la salida antes de cambiar configuración.
+
+## Servicios, logs y paquetes
+
+### Concepto
+
+Un gestor de servicios mantiene procesos declarados y recoge sus eventos. Los
+logs son evidencia temporal: deben correlacionarse con la unidad, el PID, la
+configuración y el instante de la observación. Un gestor de paquetes resuelve
+versiones y dependencias según la distribución; no es un formato universal de
+comandos.
+
+```mermaid
+flowchart LR
+  U[Unidad declarada] --> P[Proceso]
+  P --> L[Log estructurado o de texto]
+  L --> H[Hipótesis de incidente]
+  H --> V[Verificación acotada]
+```
+
+### `systemd` con precisión
+
+En un host con `systemd`, `systemctl status nombre.service` muestra el estado de
+una unidad y `journalctl -u nombre.service` filtra su diario. Antes de reiniciar
+un servicio, captura estado, últimos eventos y configuración relevante. Un
+reinicio puede ocultar una condición transitoria; no es un diagnóstico.
+
+El contenedor del curso no inicia `systemd` como PID 1. Por eso estos comandos
+se explican, pero no se ejecutan como práctica ni se sustituyen con una falsa
+emulación. Los fixtures del laboratorio representan únicamente contratos
+observables de logs y procesos locales.
+
+### Paquetes y distribuciones
+
+Debian usa `apt`; Fedora usa `dnf`; Arch usa `pacman`. Los tres resuelven
+paquetes, pero sus nombres, repositorios, políticas de actualización y modelos
+de configuración no son intercambiables.
+
+```bash
+# Debian: ejemplo explicativo; no se ejecuta como parte de una práctica.
+apt-cache policy curl
+
+# Fedora y Arch: comparación conceptual.
+dnf info curl
+pacman -Qi curl
+```
+
+Instalar paquetes modifica el sistema. Antes de hacerlo en un host real,
+consulta la procedencia, versión, cambios y política del equipo. En Docker, la
+lista de herramientas está fijada en el `Dockerfile` para que los laboratorios
+sean reproducibles.
+
+### Lectura de logs
+
+No filtres un log para confirmar solo tu sospecha. Busca el intervalo de tiempo,
+el identificador de petición o proceso y la secuencia anterior al error. Una
+línea aislada puede ser el síntoma; las líneas inmediatamente anteriores suelen
+contener la causa o el cambio de estado.
+
+### Ejercicios
+
+1. Ordena una investigación de servicio antes de decidir si se reinicia.
+2. Explica por qué `apt install`, `dnf install` y `pacman -S` no deben aparecer
+   como una única receta copiable.
+3. Identifica dos límites de usar fixtures de logs en vez de `journalctl`.
+
+### Soluciones
+
+1. Captura unidad, socket, proceso, configuración y últimos eventos; formula
+   una hipótesis y verifica su alcance antes de cambiar el estado.
+2. Porque cada distribución resuelve repositorios, nombres y políticas propias.
+3. Los fixtures no representan el ciclo de PID 1 ni los metadatos completos
+   del journal; solo permiten practicar lectura y correlación determinista.
