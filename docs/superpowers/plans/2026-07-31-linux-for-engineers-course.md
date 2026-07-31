@@ -2,6 +2,8 @@
 
 **Estado:** draft
 
+**Seguimiento operativo:** [GitHub Project #26](https://github.com/users/jeresoftx/projects/26)
+
 ## Fuente de verdad
 
 RFC-0001 §2, §10, §13-§17, §20 y §24; RFC-0002; RFC-0003.
@@ -32,3 +34,7 @@ Fundación → shell y datos → sistema local → conectividad → automatizaci
 ## Criterio de cierre
 
 El curso queda completo como `draft` cuando cada unidad tenga concepto, problema, alternativas, límites, comandos explicados, Mermaid, laboratorio reproducible, ejercicios, soluciones y trazabilidad GitHub. El Project no debe tener issues o PRs abiertos, todos sus items deben estar en `Done`, los milestones deben estar auditados y `main` debe estar limpia.
+
+## Ejecución trazable
+
+El Project está agrupado por milestone. La ruta crítica avanza en orden por los issues #1 a #18; cada uno se entrega mediante una rama aislada, un commit principal y un PR que cierra el issue. Los PRs se fusionan en modo de revisión diferida y el contenido permanece en `draft` hasta una revisión humana.
