@@ -1,0 +1,4 @@
+2026-07-31T10:00:00Z service=demo level=INFO event=starting
+2026-07-31T10:00:01Z service=demo level=INFO event=listening port=18081
+2026-07-31T10:00:02Z service=demo level=WARN event=retry request=42
+2026-07-31T10:00:03Z service=demo level=INFO event=ready
