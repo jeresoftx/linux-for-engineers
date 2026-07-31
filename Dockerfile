@@ -31,6 +31,8 @@ RUN useradd --create-home --shell /bin/bash learner
 WORKDIR /course
 COPY --chown=learner:learner scripts /course/scripts
 COPY --chown=learner:learner labs /course/labs
+COPY --chown=learner:learner exercises /course/exercises
+COPY --chown=learner:learner solutions /course/solutions
 COPY --chown=learner:learner tests /course/tests
 
 USER learner
